@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<div class="card">
+  <h1>MyApp</h1>
+
+  <!-- Abas -->
+  <div class="tabs">
+    <button class="tab on" onclick="go('login')">Entrar</button>
+    <button class="tab"    onclick="go('reg')">Cadastrar</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="sec on" id="s-login">
+    <p>Bem-vindo de volta!</p>
+    <div class="field">
+      <label>E-mail</label>
+      <input id="l-email" type="email" placeholder="seu@email.com"/>
+      <div class="msg" id="e-l-email"></div>
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input id="l-pass" type="password" placeholder="••••••••"/>
+      <div class="msg" id="e-l-pass"></div>
+    </div>
+    <button class="main" onclick="login()">Entrar</button>
+  </div>
+
+  <!-- CADASTRO -->
+  <div class="sec" id="s-reg">
+    <p>Crie sua conta grátis.</p>
+    <div class="field">
+      <label>Nome</label>
+      <input id="r-name" type="text" placeholder="Seu nome"/>
+      <div class="msg" id="e-r-name"></div>
+    </div>
+    <div class="field">
+      <label>E-mail</label>
+      <input id="r-email" type="email" placeholder="seu@email.com"/>
+      <div class="msg" id="e-r-email"></div>
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input id="r-pass" type="password" placeholder="Mínimo 6 caracteres" oninput="strength()"/>
+      <div class="msg" id="e-r-pass"></div>
+      <div class="bar-wrap" id="bar-wrap">
+        <div class="bar"><div class="bar-fill" id="bar-fill"></div></div>
+        <div class="bar-label" id="bar-label"></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Confirmar senha</label>
+      <input id="r-pass2" type="password" placeholder="Repita a senha"/>
+      <div class="msg" id="e-r-pass2"></div>
+    </div>
+    <button class="main" onclick="register()">Criar conta</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

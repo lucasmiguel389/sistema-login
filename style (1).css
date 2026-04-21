@@ -1,0 +1,62 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: sans-serif;
+  background: #0f0f15;
+  color: #eee;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: #1a1a24;
+  border: 1px solid #2a2a3d;
+  border-radius: 16px;
+  padding: 36px;
+  width: 100%;
+  max-width: 400px;
+}
+
+h1 { font-size: 22px; margin-bottom: 4px; }
+p  { font-size: 13px; color: #888; margin-bottom: 24px; }
+
+/* Abas */
+.tabs { display: flex; background: #111; border-radius: 8px; padding: 3px; margin-bottom: 24px; }
+.tab  { flex: 1; padding: 9px; border: none; background: none; color: #888; border-radius: 6px; cursor: pointer; font-size: 14px; }
+.tab.on { background: #6c5ff7; color: #fff; }
+
+/* Inputs */
+label  { display: block; font-size: 12px; color: #888; margin-bottom: 5px; }
+.field { margin-bottom: 14px; }
+input  { width: 100%; padding: 11px 14px; background: #111; border: 1.5px solid #2a2a3d; border-radius: 10px; color: #eee; font-size: 14px; outline: none; }
+input:focus { border-color: #6c5ff7; }
+input.err   { border-color: #f76; }
+input.ok    { border-color: #4cb; }
+
+/* Mensagem de erro */
+.msg    { font-size: 11px; color: #f76; margin-top: 4px; display: none; }
+.msg.on { display: block; }
+
+/* Barra de força da senha */
+.bar-wrap    { margin-top: 6px; display: none; }
+.bar-wrap.on { display: block; }
+.bar         { height: 3px; background: #2a2a3d; border-radius: 2px; overflow: hidden; }
+.bar-fill    { height: 100%; width: 0; transition: .3s; }
+.bar-label   { font-size: 11px; margin-top: 3px; }
+
+/* Botão */
+button.main          { width: 100%; padding: 12px; background: #6c5ff7; border: none; border-radius: 10px; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+button.main:hover    { background: #7d70f8; }
+button.main:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Toast */
+#toast    { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px); background: #1a1a24; border: 1px solid #2a2a3d; border-radius: 10px; padding: 12px 20px; font-size: 13px; transition: .3s; opacity: 0; white-space: nowrap; }
+#toast.on { transform: translateX(-50%) translateY(0); opacity: 1; }
+#toast.ok  { color: #4cb; border-color: #4cb; }
+#toast.err { color: #f76; border-color: #f76; }
+
+/* Seções */
+.sec    { display: none; }
+.sec.on { display: block; }

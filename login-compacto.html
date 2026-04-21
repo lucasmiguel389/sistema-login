@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: #0f0f15; color: #eee; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .card { background: #1a1a24; border: 1px solid #2a2a3d; border-radius: 16px; padding: 36px; width: 100%; max-width: 400px; }
+    h1 { font-size: 22px; margin-bottom: 4px; }
+    p  { font-size: 13px; color: #888; margin-bottom: 24px; }
+
+    /* Abas */
+    .tabs { display: flex; background: #111; border-radius: 8px; padding: 3px; margin-bottom: 24px; }
+    .tab  { flex: 1; padding: 9px; border: none; background: none; color: #888; border-radius: 6px; cursor: pointer; font-size: 14px; }
+    .tab.on { background: #6c5ff7; color: #fff; }
+
+    /* Inputs */
+    label { display: block; font-size: 12px; color: #888; margin-bottom: 5px; }
+    .field { margin-bottom: 14px; position: relative; }
+    input  { width: 100%; padding: 11px 14px; background: #111; border: 1.5px solid #2a2a3d; border-radius: 10px; color: #eee; font-size: 14px; outline: none; }
+    input:focus  { border-color: #6c5ff7; }
+    input.err    { border-color: #f76; }
+    input.ok     { border-color: #4cb; }
+    .msg { font-size: 11px; color: #f76; margin-top: 4px; display: none; }
+    .msg.on { display: block; }
+
+    /* Força da senha */
+    .bar-wrap { margin-top: 6px; display: none; }
+    .bar-wrap.on { display: block; }
+    .bar { height: 3px; background: #2a2a3d; border-radius: 2px; overflow: hidden; }
+    .bar-fill { height: 100%; width: 0; transition: .3s; }
+    .bar-label { font-size: 11px; margin-top: 3px; }
+
+    /* Botão */
+    button.main { width: 100%; padding: 12px; background: #6c5ff7; border: none; border-radius: 10px; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+    button.main:hover { background: #7d70f8; }
+    button.main:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* Toast */
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px); background: #1a1a24; border: 1px solid #2a2a3d; border-radius: 10px; padding: 12px 20px; font-size: 13px; transition: .3s; opacity: 0; white-space: nowrap; }
+    #toast.on { transform: translateX(-50%) translateY(0); opacity: 1; }
+    #toast.ok  { color: #4cb; border-color: #4cb; }
+    #toast.err { color: #f76; border-color: #f76; }
+
+    /* Seções */
+    .sec { display: none; }
+    .sec.on { display: block; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>MyApp</h1>
+
+  <div class="tabs">
+    <button class="tab on" onclick="go('login')">Entrar</button>
+    <button class="tab"    onclick="go('reg')">Cadastrar</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="sec on" id="s-login">
+    <p>Bem-vindo de volta!</p>
+    <div class="field"><label>E-mail</label><input id="l-email" type="email" placeholder="seu@email.com"/><div class="msg" id="e-l-email"></div></div>
+    <div class="field"><label>Senha</label> <input id="l-pass"  type="password" placeholder="••••••••"/><div class="msg" id="e-l-pass"></div></div>
+    <button class="main" onclick="login()">Entrar</button>
+  </div>
+
+  <!-- CADASTRO -->
+  <div class="sec" id="s-reg">
+    <p>Crie sua conta grátis.</p>
+    <div class="field"><label>Nome</label>  <input id="r-name"  type="text"     placeholder="Seu nome"/><div class="msg" id="e-r-name"></div></div>
+    <div class="field"><label>E-mail</label><input id="r-email" type="email"    placeholder="seu@email.com"/><div class="msg" id="e-r-email"></div></div>
+    <div class="field">
+      <label>Senha</label>
+      <input id="r-pass" type="password" placeholder="Mínimo 6 caracteres" oninput="strength()"/>
+      <div class="msg" id="e-r-pass"></div>
+      <div class="bar-wrap" id="bar-wrap"><div class="bar"><div class="bar-fill" id="bar-fill"></div></div><div class="bar-label" id="bar-label"></div></div>
+    </div>
+    <div class="field"><label>Confirmar senha</label><input id="r-pass2" type="password" placeholder="Repita a senha"/><div class="msg" id="e-r-pass2"></div></div>
+    <button class="main" onclick="register()">Criar conta</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const users = () => JSON.parse(localStorage.getItem('users') || '[]');
+  const save  = u  => localStorage.setItem('users', JSON.stringify(u));
+  const emailOk = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+
+  function go(tab) {
+    ['login','reg'].forEach(t => {
+      $('s-'+t).classList.toggle('on', t === tab);
+      document.querySelectorAll('.tab')[t === 'login' ? 0 : 1].classList.toggle('on', t === tab);
+    });
+  }
+
+  function err(id, msg) {
+    $(id).classList.add('err');
+    $('e-'+id).textContent = msg;
+    $('e-'+id).classList.add('on');
+    return false;
+  }
+
+  function clear(id) {
+    $(id).classList.remove('err','ok');
+    $('e-'+id).classList.remove('on');
+  }
+
+  function toast(msg, type) {
+    const t = $('toast');
+    t.textContent = (type === 'ok' ? '✅ ' : '❌ ') + msg;
+    t.className = 'on ' + type;
+    setTimeout(() => t.className = '', 3000);
+  }
+
+  function strength() {
+    const v = $('r-pass').value;
+    const wrap = $('bar-wrap'), fill = $('bar-fill'), lbl = $('bar-label');
+    if (!v) { wrap.classList.remove('on'); return; }
+    wrap.classList.add('on');
+    let s = [v.length>=6, v.length>=10, /[A-Z]/.test(v), /\d/.test(v), /\W/.test(v)].filter(Boolean).length;
+    const lvl = [['20%','#f76','Muito fraca'],['40%','#fa0','Fraca'],['60%','#ff0','Razoável'],['80%','#9d0','Boa'],['100%','#4cb','Forte 💪']][s-1] || ['0%','#f76',''];
+    fill.style.cssText = `width:${lvl[0]};background:${lvl[1]}`;
+    lbl.style.color = lvl[1]; lbl.textContent = lvl[2];
+  }
+
+  function login() {
+    const e = $('l-email').value.trim(), p = $('l-pass').value;
+    clear('l-email'); clear('l-pass');
+    if (!e || !emailOk(e)) return err('l-email', e ? 'E-mail inválido' : 'Informe o e-mail');
+    if (!p) return err('l-pass', 'Informe a senha');
+    const u = users().find(u => u.e === e && u.p === p);
+    if (!u) { err('l-email','E-mail ou senha incorretos'); return err('l-pass',' '); }
+    $('l-email').classList.add('ok'); $('l-pass').classList.add('ok');
+    toast(`Bem-vindo(a), ${u.n}! 🎉`, 'ok');
+  }
+
+  function register() {
+    const n=$('r-name').value.trim(), e=$('r-email').value.trim(), p=$('r-pass').value, p2=$('r-pass2').value;
+    ['r-name','r-email','r-pass','r-pass2'].forEach(clear);
+    if (!n)                return err('r-name',  'Informe seu nome');
+    if (!e || !emailOk(e)) return err('r-email', e ? 'E-mail inválido' : 'Informe o e-mail');
+    if (p.length < 6)      return err('r-pass',  'Mínimo 6 caracteres');
+    if (p !== p2)          return err('r-pass2', 'Senhas não coincidem');
+    const list = users();
+    if (list.find(u => u.e === e)) return err('r-email', 'E-mail já cadastrado');
+    list.push({ n, e, p, at: Date.now() });
+    save(list);
+    toast('Conta criada com sucesso! 🎉', 'ok');
+    ['r-name','r-email','r-pass','r-pass2'].forEach(id => $(id).value = '');
+    $('bar-wrap').classList.remove('on');
+    setTimeout(() => go('login'), 1200);
+  }
+</script>
+</body>
+</html>
